@@ -62,7 +62,7 @@ public class Client {
 	}
 	
 	public static void run0() {
-		instance = new Minecraft(Display.getDisplayMode().getWidth(), Display.getDisplayMode().getHeight(), false);
+		instance = new Minecraft(Display.getWidth(), Display.getHeight(), false);
 		instance.session = new Session("Player", "fuckmojang123");
 		instance.session.mpPassParameter = "randpasslol";
 		mcThread = new Thread(instance, "Minecraft main thread");

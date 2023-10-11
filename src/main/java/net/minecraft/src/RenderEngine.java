@@ -161,7 +161,7 @@ public class RenderEngine {
 	}
 
 	public int getTextureForDownloadableImage(String s, String s1) {
-		return getTexture("/mob/char.png");
+		return getTexture("/char.png");
 	}
 	
 	public void registerTextureFX(TextureFX texturefx) {
@@ -190,7 +190,7 @@ public class RenderEngine {
 	}
 
 	public static boolean useMipmaps = false;
-	private HashMap<String, Integer> textureMap;
+	private static HashMap<String, Integer> textureMap;
 	private HashMap<Integer, MinecraftImageData> textureNameToImageMap;
 	private IntBuffer singleIntBuffer;
 	private ByteBuffer imageDataB1;

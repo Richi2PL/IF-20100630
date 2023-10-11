@@ -232,87 +232,81 @@ public class Minecraft implements Runnable {
 			return;
 		}
 
-		try {
-			long var1 = System.currentTimeMillis();
-			int var3 = 0;
+		long var1 = System.currentTimeMillis();
+		int var3 = 0;
 
-			while(this.running) {
-				AxisAlignedBB.clearBoundingBoxPool();
-				Vec3D.initialize();
+		while(this.running) {
+			AxisAlignedBB.clearBoundingBoxPool();
+			Vec3D.initialize();
 				
-				if(this.isGamePaused) {
-					float var4 = this.timer.renderPartialTicks;
-					this.timer.updateTimer();
-					this.timer.renderPartialTicks = var4;
-				} else {
-					this.timer.updateTimer();
-				}
+			if(this.isGamePaused) {
+				float var4 = this.timer.renderPartialTicks;
+				this.timer.updateTimer();
+				this.timer.renderPartialTicks = var4;
+			} else {
+				this.timer.updateTimer();
+			}
 
-				for(int var14 = 0; var14 < this.timer.elapsedTicks; ++var14) {
-					++this.ticksRan;
-					this.runTick();
-				}
+			for(int var14 = 0; var14 < this.timer.elapsedTicks; ++var14) {
+				++this.ticksRan;
+				this.runTick();
+			}
 
-				this.checkGLError("Pre render");
-				if(this.isGamePaused) {
-					this.timer.renderPartialTicks = 1.0F;
-				}
+			this.checkGLError("Pre render");
+			if(this.isGamePaused) {
+				this.timer.renderPartialTicks = 1.0F;
+			}
 
-				//this.sndManager.setListener(this.thePlayer, this.timer.renderPartialTicks);
-				GL11.glEnable(GL11.GL_TEXTURE_2D);
-				if(this.theWorld != null) {
-					while(this.theWorld.updatingLighting()) {
-					}
-				}
-
-				if(!this.skipRenderWorld) {
-					this.playerController.setPartialTime(this.timer.renderPartialTicks);
-					this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks);
-				}
-
-				if(Keyboard.isKeyDown(33) && Keyboard.isKeyDown(7)) {
-					this.displayDebugInfo();
-				} else {
-					this.prevFrameTime = System.nanoTime();
-				}
-
-				Thread.yield();
-				Display.update();
-				if(LWJGLMain.canvas.getWidth() != this.displayWidth || LWJGLMain.canvas.getHeight() != this.displayHeight) {
-					this.displayWidth = LWJGLMain.canvas.getWidth();
-					this.displayHeight = LWJGLMain.canvas.getHeight();
-					if(this.displayWidth <= 0) {
-						this.displayWidth = 1;
-					}
-
-					if(this.displayHeight <= 0) {
-						this.displayHeight = 1;
-					}
-
-					this.resize(this.displayWidth, this.displayHeight);
-				}
-
-				if(this.gameSettings.limitFramerate) {
-					Thread.sleep(5L);
-				}
-
-				this.checkGLError("Post render");
-				++var3;
-
-				for(this.isGamePaused = !this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame(); System.currentTimeMillis() >= var1 + 1000L; var3 = 0) {
-					this.debug = var3 + " fps, " + WorldRenderer.chunksUpdated + " chunk updates";
-					WorldRenderer.chunksUpdated = 0;
-					var1 += 1000L;
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+			if(this.theWorld != null) {
+				while(this.theWorld.updatingLighting()) {
 				}
 			}
-		} catch (MinecraftError var11) {
-		} catch (Exception var12) {
-			var12.printStackTrace();
-			new UnexpectedThrowable("Unexpected error", var12);
-		} finally {
-			this.shutdownMinecraftApplet();
-		}
 
+			if(!this.skipRenderWorld) {
+				this.playerController.setPartialTime(this.timer.renderPartialTicks);
+				this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks);
+			}
+
+			if(Keyboard.isKeyDown(33) && Keyboard.isKeyDown(7)) {
+				this.displayDebugInfo();
+			} else {
+				this.prevFrameTime = System.nanoTime();
+			}
+
+			Thread.yield();
+			Display.update();
+			if(Display.getWidth() != this.displayWidth || Display.getHeight() != this.displayHeight) {
+				this.displayWidth = LWJGLMain.canvas.getWidth();
+				this.displayHeight = LWJGLMain.canvas.getHeight();
+				if(this.displayWidth <= 0) {
+					this.displayWidth = 1;
+				}
+
+				if(this.displayHeight <= 0) {
+					this.displayHeight = 1;
+				}
+
+				this.resize(this.displayWidth, this.displayHeight);
+			}
+
+			if(this.gameSettings.limitFramerate) {
+				try {
+					Thread.sleep(5L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			this.checkGLError("Post render");
+			++var3;
+
+			for(this.isGamePaused = !this.isMultiplayerWorld() && this.currentScreen != null && this.currentScreen.doesGuiPauseGame(); System.currentTimeMillis() >= var1 + 1000L; var3 = 0) {
+				this.debug = var3 + " fps, " + WorldRenderer.chunksUpdated + " chunk updates";
+				WorldRenderer.chunksUpdated = 0;
+				var1 += 1000L;
+			}
+		}
 	}
 
 	private void displayDebugInfo() {

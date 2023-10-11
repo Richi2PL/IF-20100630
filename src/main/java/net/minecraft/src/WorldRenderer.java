@@ -74,9 +74,13 @@ public class WorldRenderer {
 		}
 	}
 
-	private void setupGLTranslation() {
-		GL11.glTranslatef((float)this.posXClip, (float)this.posYClip, (float)this.posZClip);
-	}
+//	private void setupGLTranslation() {
+//		float var19 = 1.000001F;
+//		GL11.glTranslatef((float)posXClip * var19, (float)posYClip * var19, (float)posZClip * var19);
+//		for(int var2000 = 0; var2000 < 4; var2000++) {
+//			tessellator.addVertex(posX * var19, posY * var19, posZ * var19);
+//		}
+//	}
 
 	public void updateRenderer() {
 		if(this.needsUpdate) {
@@ -113,14 +117,8 @@ public class WorldRenderer {
 								if(!var14) {
 									var14 = true;
 									GL11.glNewList(this.glRenderList + var11, GL11.GL_COMPILE);
-									GL11.glPushMatrix();
-									this.setupGLTranslation();
-									float var19 = 1.000001F;
-									GL11.glTranslatef((float)(-this.sizeDepth) / 2.0F, (float)(-this.sizeHeight) / 2.0F, (float)(-this.sizeDepth) / 2.0F);
-									GL11.glScalef(var19, var19, var19);
-									GL11.glTranslatef((float)this.sizeDepth / 2.0F, (float)this.sizeHeight / 2.0F, (float)this.sizeDepth / 2.0F);
 									tessellator.startDrawingQuads();
-									tessellator.setTranslationD((double)(-this.posX), (double)(-this.posY), (double)(-this.posZ));
+									tessellator.setTranslationD((double) (this.posXClip-this.posX), (double) (this.posYClip-this.posY), (double) (this.posZClip-this.posZ));
 								}
 
 								if(var11 == 0 && Block.blocksList[var18] instanceof BlockContainer) {
@@ -144,7 +142,6 @@ public class WorldRenderer {
 
 				if(var14) {
 					tessellator.draw();
-					GL11.glPopMatrix();
 					GL11.glEndList();
 					tessellator.setTranslationD(0.0D, 0.0D, 0.0D);
 				} else {

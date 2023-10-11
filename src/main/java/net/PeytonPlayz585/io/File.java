@@ -1,7 +1,6 @@
 package net.PeytonPlayz585.io;
 
 import java.util.Collection;
-import java.util.List;
 
 import net.PeytonPlayz585.opengl.LWJGLMain;
 
@@ -26,11 +25,11 @@ public class File {
 	}
 	
 	public boolean exists() {
-		if(LWJGLMain.directoryExists(path) || LWJGLMain.fileExists(path)) {
-			return true;
-		} else {
+		byte[] data = LWJGLMain.readFile(path);
+		if(data == null) {
 			return false;
 		}
+		return true;
 	}
 	
 	public boolean mkdirs() {
@@ -76,7 +75,9 @@ public class File {
 	}
 
 	public void delete() {
-		LWJGLMain.writeFile(path, null);
+		if(exists()) {
+			LWJGLMain.deleteFile(path);
+		}
 	}
 	
 	public File[] listFiles() {
@@ -87,10 +88,6 @@ public class File {
 	        files[i++] = new File(fileEntry.path);
 	    }
 	    return files;
-	}
-
-	public boolean isDirectory() {
-		return LWJGLMain.directoryExists(path);
 	}
 
 	public void renameTo(File var4) {

@@ -255,40 +255,52 @@ public class EntityRenderer {
 		int var3;
 		int var9;
 		int var10;
+//		if(this.mc.inGameHasFocus) {
+//			int var2 = Mouse.getDX() * 0;
+//			var3 = Mouse.getDY() * 0;
+//			this.mc.mouseHelper.mouseXYChange();
+//			byte var4 = 1;
+//			if(this.mc.gameSettings.invertMouse) {
+//				var4 = -1;
+//			}
+//
+//			boolean var5 = false;
+//			boolean var6 = false;
+//			var9 = var2 + this.mc.mouseHelper.deltaX;
+//			var10 = var3 - this.mc.mouseHelper.deltaY;
+//			if(var2 != 0 || this.mouseDX != 0) {
+//				System.out.println("xxo: " + var2 + ", " + this.mouseDX + ": " + this.mouseDX + ", xo: " + var9);
+//			}
+//
+//			if(this.mouseDX != 0) {
+//				this.mouseDX = 0;
+//			}
+//
+//			if(this.mouseDY != 0) {
+//				this.mouseDY = 0;
+//			}
+//
+//			if(var2 != 0) {
+//				this.mouseDX = var2;
+//			}
+//
+//			if(var3 != 0) {
+//				this.mouseDY = var3;
+//			}
+//
+//			this.mc.thePlayer.setAngles((float)var9, (float)(var10 * var4));
+//		}
+		
+		int var5 = Mouse.getDX();
+		int var6 = Mouse.getDY();
+		byte var91 = 1;
+		
+		if(this.mc.gameSettings.invertMouse) {
+			var91 = -1;
+		}
+		
 		if(this.mc.inGameHasFocus) {
-			int var2 = Mouse.getDX() * 0;
-			var3 = Mouse.getDY() * 0;
-			this.mc.mouseHelper.mouseXYChange();
-			byte var4 = 1;
-			if(this.mc.gameSettings.invertMouse) {
-				var4 = -1;
-			}
-
-			boolean var5 = false;
-			boolean var6 = false;
-			var9 = var2 + this.mc.mouseHelper.deltaX;
-			var10 = var3 - this.mc.mouseHelper.deltaY;
-			if(var2 != 0 || this.mouseDX != 0) {
-				System.out.println("xxo: " + var2 + ", " + this.mouseDX + ": " + this.mouseDX + ", xo: " + var9);
-			}
-
-			if(this.mouseDX != 0) {
-				this.mouseDX = 0;
-			}
-
-			if(this.mouseDY != 0) {
-				this.mouseDY = 0;
-			}
-
-			if(var2 != 0) {
-				this.mouseDX = var2;
-			}
-
-			if(var3 != 0) {
-				this.mouseDY = var3;
-			}
-
-			this.mc.thePlayer.setAngles((float)var9, (float)(var10 * var4));
+			this.mc.thePlayer.turn((float)var5, (float)(var6 & var91));
 		}
 
 		if(!this.mc.skipRenderWorld) {

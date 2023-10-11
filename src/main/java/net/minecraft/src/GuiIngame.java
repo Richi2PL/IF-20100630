@@ -29,9 +29,9 @@ public class GuiIngame extends Gui {
 		FontRenderer var8 = this.mc.fontRenderer;
 		this.mc.entityRenderer.setupOverlayRendering();
 		GL11.glEnable(GL11.GL_BLEND);
-		if(this.mc.gameSettings.fancyGraphics) {
-			this.renderVignette(this.mc.thePlayer.getEntityBrightness(var1), var6, var7);
-		}
+//		if(this.mc.gameSettings.fancyGraphics) {
+//			this.renderVignette(this.mc.thePlayer.getEntityBrightness(var1), var6, var7);
+//		}
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/gui/gui.png"));

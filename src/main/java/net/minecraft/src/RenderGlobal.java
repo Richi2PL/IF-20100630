@@ -509,6 +509,7 @@ public class RenderGlobal implements IWorldAccess {
 		double var20 = var19.lastTickPosX + (var19.posX - var19.lastTickPosX) * var4;
 		double var10 = var19.lastTickPosY + (var19.posY - var19.lastTickPosY) * var4;
 		double var12 = var19.lastTickPosZ + (var19.posZ - var19.lastTickPosZ) * var4;
+		
 		int var14 = 0;
 
 		int var15;
