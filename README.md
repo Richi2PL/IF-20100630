@@ -1,6 +1,10 @@
 # Infdev-20100630-1-WebGL
 This project aims to be a 1:1 replica of Minecraft Infdev 20100630-1 ported to the browser using WebGL and TeaVM.
 
+## STILL IN TESTING!
+THIS PROJECT IS STILL IN TESTING, IT WILL CONTAIN BUGS AND GLITCHES SO DON'T GET TOO ATTACHED TO YOUR WORLDS!
+GAME IS EXTREMELY LAGGY...
+
 ## Contributing
 Feel free to contribute, just open a pull request and DM on Discord (peytonplayz585) because I probably won't check pull requests that often.
 
