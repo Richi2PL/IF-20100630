@@ -34,18 +34,14 @@ public class RenderEngine {
 			singleIntBuffer.clear();
 			GLAllocation.generateTextureNames(singleIntBuffer);
 			int i = singleIntBuffer.get(0);
-			if (s.startsWith("%clamp%")) {
+			if (s.startsWith("%%")) {
 				clampTexture = true;
 				setupTexture(readTextureImage(LWJGLMain.loadResourceBytes(s.substring(7))), i);
 				clampTexture = false;
-			} else if (s.startsWith("%blur%")) {
-				blurTexture = true;
-				setupTexture(readTextureImage(LWJGLMain.loadResourceBytes(s.substring(6))), i);
-				blurTexture = false;
 			} else {
-				if(s.equals("/terrain.png")) {
-					useMipmaps = true;
-				}
+				//if(s.equals("/terrain.png")) {
+					//useMipmaps = true;
+				//}
 				setupTexture(readTextureImage(LWJGLMain.loadResourceBytes(s)), i);
 				useMipmaps = false;
 			}

@@ -1,61 +1,69 @@
 package net.minecraft.src;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 
-import net.PeytonPlayz585.io.File;
+import net.PeytonPlayz585.opengl.LWJGLMain;
 
 public class ChunkLoader implements IChunkLoader {
-	private File saveDir;
-	private boolean createIfNecessary;
+	
+	private String saveDir;
+	
+	public ChunkLoader(String dir) {
+		saveDir = dir;
+	}
+	
+	public static final String CHUNK_CHARS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	public ChunkLoader(File var1, boolean var2) {
-		this.saveDir = var1;
-		this.createIfNecessary = var2;
+	private String chunkFileForXZ(int x, int z) {
+		int unsignedX = x + 30233088;
+		int unsignedZ = z + 30233088;
+		int radix = CHUNK_CHARS.length();
+		char[] path = new char[10];
+		for(int i = 0; i < 5; ++i) {
+			path[i * 2] = CHUNK_CHARS.charAt(unsignedX % radix);
+			unsignedX /= radix;
+			path[i * 2 + 1] = CHUNK_CHARS.charAt(unsignedZ % radix);
+			unsignedZ /= radix;
+		}
+		return new String(path);
 	}
 
-	private File chunkFileForXZ(int var1, int var2) {
-		String var3 = "c." + Integer.toString(var1, 36) + "." + Integer.toString(var2, 36) + ".dat";
-		String var4 = Integer.toString(var1 & 63, 36);
-		String var5 = Integer.toString(var2 & 63, 36);
-		File var6 = new File(this.saveDir, var4);
-		if(!var6.exists()) {
-			if(!this.createIfNecessary) {
-				return null;
-			}
-
-			var6.mkdir();
-		}
-
-		var6 = new File(var6, var5);
-		if(!var6.exists()) {
-			if(!this.createIfNecessary) {
-				return null;
-			}
-
-			var6.mkdir();
-		}
-
-		var6 = new File(var6, var3);
-		return !var6.exists() && !this.createIfNecessary ? null : var6;
-	}
-
-	public Chunk loadChunk(World var1, int var2, int var3) {
-		File var4 = this.chunkFileForXZ(var2, var3);
-		if(var4 != null && var4.exists()) {
+	public Chunk loadChunk(World var1, int x, int z) {
+		String name = chunkFileForXZ(x, z);
+		String path = saveDir + "/" + name;
+		byte[] dat = LWJGLMain.readFile(path);
+		if(dat != null) {
 			try {
-				NBTTagCompound var6 = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(var4.getBytes())));
-				return loadChunkIntoWorldFromCompound(var1, var6.getCompoundTag("Level"));
-			} catch (Exception var7) {
-				var7.printStackTrace();
+				NBTTagCompound nbt = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(dat)));
+				int xx = nbt.getInteger("xPos");
+				int zz = nbt.getInteger("zPos");
+				if(x != xx || z != zz) {
+					String name2 = chunkFileForXZ(xx, zz);
+					System.err.println("The chunk file '" + name + "' was supposed to be at [" + x + ", " + z + "], but the file contained a chunk from [" + xx + ", " + zz +
+							"]. It's data will be moved to file '" + name2 + "', and a new empty chunk will be created for file '" + name + "' for [" + x + ", " + z + "]");
+					LWJGLMain.renameFile(path, saveDir + "/" + name2);
+					return null;
+				}
+				
+				return loadChunkIntoWorldFromCompound(var1, nbt);
+			} catch (IOException e) {
+				System.err.println("Corrupt chunk '" + name + "' was found at: [" + x + ", " + z + "]");
+				System.err.println("The file will be deleted");
+				LWJGLMain.deleteFile(path);
+				e.printStackTrace();
+				return null;
 			}
+		}else {
+			return null;
 		}
-
-		return null;
 	}
 
 	public void saveChunk(World var1, Chunk var2) {
-		File var3 = this.chunkFileForXZ(var2.xPosition, var2.zPosition);
 		NBTTagCompound toSave = new NBTTagCompound();
 		storeChunkInCompound(var2, var1, toSave);
 		ByteArrayOutputStream bao = new ByteArrayOutputStream(131072);
@@ -66,7 +74,7 @@ public class ChunkLoader implements IChunkLoader {
 			e.printStackTrace();
 			return;
 		}
-		var3.writeBytes(bao.toByteArray());
+		LWJGLMain.writeFile(saveDir + "/" + chunkFileForXZ(var2.xPosition, var2.zPosition), bao.toByteArray());
 	}
 
 	public void storeChunkInCompound(Chunk var1, World var2, NBTTagCompound var3) {
@@ -82,33 +90,33 @@ public class ChunkLoader implements IChunkLoader {
 		var1.hasEntities = false;
 		NBTTagList var4 = new NBTTagList();
 
-		Iterator var6;
-		NBTTagCompound var8;
-		for(int var5 = 0; var5 < var1.entities.length; ++var5) {
-			var6 = var1.entities[var5].iterator();
-
-			while(var6.hasNext()) {
-				Entity var7 = (Entity)var6.next();
-				var1.hasEntities = true;
-				var8 = new NBTTagCompound();
-				if(var7.addEntityID(var8)) {
-					var4.setTag(var8);
-				}
-			}
-		}
-
-		var3.setTag("Entities", var4);
-		NBTTagList var9 = new NBTTagList();
-		var6 = var1.chunkTileEntityMap.values().iterator();
-
-		while(var6.hasNext()) {
-			TileEntity var10 = (TileEntity)var6.next();
-			var8 = new NBTTagCompound();
-			var10.writeToNBT(var8);
-			var9.setTag(var8);
-		}
-
-		var3.setTag("TileEntities", var9);
+//		Iterator var6;
+//		NBTTagCompound var8;
+//		for(int var5 = 0; var5 < var1.entities.length; ++var5) {
+//			var6 = var1.entities[var5].iterator();
+//
+//			while(var6.hasNext()) {
+//				Entity var7 = (Entity)var6.next();
+//				var1.hasEntities = true;
+//				var8 = new NBTTagCompound();
+//				if(var7.addEntityID(var8)) {
+//					var4.setTag(var8);
+//				}
+//			}
+//		}
+//
+//		var3.setTag("Entities", var4);
+//		NBTTagList var9 = new NBTTagList();
+//		var6 = var1.chunkTileEntityMap.values().iterator();
+//
+//		while(var6.hasNext()) {
+//			TileEntity var10 = (TileEntity)var6.next();
+//			var8 = new NBTTagCompound();
+//			var10.writeToNBT(var8);
+//			var9.setTag(var8);
+//		}
+//
+//		var3.setTag("TileEntities", var9);
 	}
 
 	public static Chunk loadChunkIntoWorldFromCompound(World var0, NBTTagCompound var1) {
@@ -136,28 +144,28 @@ public class ChunkLoader implements IChunkLoader {
 			var4.doNothing();
 		}
 
-		NBTTagList var5 = var1.getTagList("Entities");
-		if(var5 != null) {
-			for(int var6 = 0; var6 < var5.tagCount(); ++var6) {
-				NBTTagCompound var7 = (NBTTagCompound)var5.tagAt(var6);
-				Entity var8 = EntityList.createEntityFromNBT(var7, var0);
-				var4.hasEntities = true;
-				if(var8 != null) {
-					var4.addEntity(var8);
-				}
-			}
-		}
-
-		NBTTagList var10 = var1.getTagList("TileEntities");
-		if(var10 != null) {
-			for(int var11 = 0; var11 < var10.tagCount(); ++var11) {
-				NBTTagCompound var12 = (NBTTagCompound)var10.tagAt(var11);
-				TileEntity var9 = TileEntity.createAndLoadEntity(var12);
-				if(var9 != null) {
-					var4.addTileEntity(var9);
-				}
-			}
-		}
+//		NBTTagList var5 = var1.getTagList("Entities");
+//		if(var5 != null) {
+//			for(int var6 = 0; var6 < var5.tagCount(); ++var6) {
+//				NBTTagCompound var7 = (NBTTagCompound)var5.tagAt(var6);
+//				Entity var8 = EntityList.createEntityFromNBT(var7, var0);
+//				var4.hasEntities = true;
+//				if(var8 != null) {
+//					var4.addEntity(var8);
+//				}
+//			}
+//		}
+//
+//		NBTTagList var10 = var1.getTagList("TileEntities");
+//		if(var10 != null) {
+//			for(int var11 = 0; var11 < var10.tagCount(); ++var11) {
+//				NBTTagCompound var12 = (NBTTagCompound)var10.tagAt(var11);
+//				TileEntity var9 = TileEntity.createAndLoadEntity(var12);
+//				if(var9 != null) {
+//					var4.addTileEntity(var9);
+//				}
+//			}
+//		}
 
 		return var4;
 	}

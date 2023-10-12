@@ -88,6 +88,7 @@ public class TileEntityMobSpawner extends TileEntity {
 
 	public void writeToNBT(NBTTagCompound var1) {
 		super.writeToNBT(var1);
+		var1.setString("id", "MobSpawner");
 		var1.setString("EntityId", this.mobID);
 		var1.setShort("Delay", (short)this.delay);
 	}

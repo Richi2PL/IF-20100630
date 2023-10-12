@@ -5,13 +5,10 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
-
-import net.PeytonPlayz585.io.File;
 import net.PeytonPlayz585.opengl.LWJGLMain;
 
 public class Minecraft implements Runnable {
 	public PlayerController playerController = new PlayerControllerSP(this);
-	private boolean fullscreen = false;
 	public int displayWidth;
 	public int displayHeight;
 	private Timer timer = new Timer(20.0F);
@@ -29,8 +26,6 @@ public class Minecraft implements Runnable {
 	public EntityRenderer entityRenderer = new EntityRenderer(this);
 	private int ticksRan = 0;
 	private int leftClickCounter = 0;
-	private int tempDisplayWidth;
-	private int tempDisplayHeight;
 	public String objectMouseOverString = null;
 	public int rightClickDelayTimer = 0;
 	public GuiIngame ingameGUI;
@@ -38,14 +33,11 @@ public class Minecraft implements Runnable {
 	public ModelBiped playerModelBiped = new ModelBiped(0.0F);
 	public MovingObjectPosition objectMouseOver = null;
 	public GameSettings gameSettings;
-	//public SoundManager sndManager = new SoundManager();
 	public MouseHelper mouseHelper;
-	public File mcDataDir;
 	public static long[] tickTimes = new long[512];
 	public static int numRecordedFrameTimes = 0;
 	private TextureWaterFX textureWaterFX = new TextureWaterFX();
 	private TextureLavaFX textureLavaFX = new TextureLavaFX();
-	private static File minecraftDir = null;
 	volatile boolean running = true;
 	public String debug = "";
 	long prevFrameTime = -1L;
@@ -55,20 +47,15 @@ public class Minecraft implements Runnable {
 	long systemTime = System.currentTimeMillis();
 
 	public Minecraft(int var4, int var5, boolean var6) {
-		this.tempDisplayWidth = var4;
-		this.tempDisplayHeight = var5;
-		this.fullscreen = var6;
 		new ThreadSleepForever(this, "Timer hack thread");
 		this.displayWidth = var4;
 		this.displayHeight = var5;
-		this.fullscreen = var6;
 	}
 
 	public void setServer(String var1, int var2) {
 	}
 
 	public void startGame() throws LWJGLException {
-		this.mcDataDir = getMinecraftDir();
 		this.gameSettings = new GameSettings(this);
 		this.renderEngine = new RenderEngine(this.gameSettings);
 		this.fontRenderer = new FontRenderer(this.gameSettings, "/default.png", this.renderEngine);
@@ -134,44 +121,6 @@ public class Minecraft implements Runnable {
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
 		this.fontRenderer.drawStringWithShadow("Loading...", 8, this.displayHeight / 2 - 16, -1);
-	}
-
-	public static File getMinecraftDir() {
-		if(minecraftDir == null) {
-			minecraftDir = getAppDir("minecraft");
-		}
-
-		return minecraftDir;
-	}
-
-	public static File getAppDir(String var0) {
-		String var1 = System.getProperty("user.home", ".");
-		File var2;
-		switch(OSMap.osValues[getOs().ordinal()]) {
-		case 1:
-		case 2:
-			var2 = new File(var1, '.' + var0 + '/');
-			break;
-		case 3:
-			var2 = new File(var1, '.' + var0 + '/');
-			break;
-		case 4:
-			var2 = new File(var1, "Library/Application Support/" + var0);
-			break;
-		default:
-			var2 = new File(var1, var0 + '/');
-		}
-
-		if(!var2.exists() && !var2.mkdirs()) {
-			throw new RuntimeException("The working directory could not be created: " + var2);
-		} else {
-			return var2;
-		}
-	}
-
-	private static EnumOS getOs() {
-		String var0 = System.getProperty("os.name").toLowerCase();
-		return var0.contains("win") ? EnumOS.windows : (var0.contains("mac") ? EnumOS.macos : (var0.contains("solaris") ? EnumOS.solaris : (var0.contains("sunos") ? EnumOS.solaris : (var0.contains("linux") ? EnumOS.linux : (var0.contains("unix") ? EnumOS.linux : EnumOS.unknown)))));
 	}
 
 	public void displayGuiScreen(GuiScreen var1) {
@@ -357,7 +306,7 @@ public class Minecraft implements Runnable {
 			var9 = var9 * var9 / 255;
 			int var10 = var9 * var9 / 255;
 			var10 = var10 * var10 / 255;
-			var3.setColorOpaque_I(-16777216 + var10 + var9 * 256 + var8 * 65536);
+			var3.setColorOpaque_I(-16777216 + var10 + var9 * 256 + var8 * 4096);
 			long var11 = tickTimes[var7] / 200000L;
 			var3.addVertex((double)((float)var7 + 0.5F), (double)((float)((long)this.displayHeight - var11) + 0.5F), 0.0D);
 			var3.addVertex((double)((float)var7 + 0.5F), (double)((float)this.displayHeight + 0.5F), 0.0D);
@@ -699,7 +648,7 @@ public class Minecraft implements Runnable {
 	public void startWorld(String var1) {
 		this.changeWorld1((World)null);
 		System.gc();
-		World var2 = new World(new File(getMinecraftDir(), "saves"), var1);
+		World var2 = new World(var1);
 		if(var2.isNewWorld) {
 			this.changeWorld2(var2, "Generating level");
 		} else {
@@ -796,20 +745,6 @@ public class Minecraft implements Runnable {
 
 		this.theWorld.dropOldChunks();
 		BlockSand.fallInstantly = false;
-	}
-
-	public void installResource(String var1, File var2) {
-		int var3 = var1.indexOf("/");
-		String var4 = var1.substring(0, var3);
-		var1 = var1.substring(var3 + 1);
-		if(var4.equalsIgnoreCase("sound")) {
-			//this.sndManager.addSound(var1, var2);
-		} else if(var4.equalsIgnoreCase("newsound")) {
-			//this.sndManager.addSound(var1, var2);
-		} else if(var4.equalsIgnoreCase("music")) {
-			//this.sndManager.addMusic(var1, var2);
-		}
-
 	}
 
 	public String debugInfoRenders() {

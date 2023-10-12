@@ -61,45 +61,45 @@ public abstract class Render {
 		GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
-	private void renderShadow(Entity var1, double var2, double var4, double var6, float var8, float var9) {
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		RenderEngine var10 = this.renderManager.renderEngine;
-		var10.bindTexture(var10.getTexture("%%/shadow.png"));
-		World var11 = this.getWorldFromRenderManager();
-		GL11.glDepthMask(false);
-		float var12 = this.shadowSize;
-		double var13 = var1.lastTickPosX + (var1.posX - var1.lastTickPosX) * (double)var9;
-		double var15 = var1.lastTickPosY + (var1.posY - var1.lastTickPosY) * (double)var9;
-		double var17 = var1.lastTickPosZ + (var1.posZ - var1.lastTickPosZ) * (double)var9;
-		int var19 = MathHelper.floor_double(var13 - (double)var12);
-		int var20 = MathHelper.floor_double(var13 + (double)var12);
-		int var21 = MathHelper.floor_double(var15 - (double)var12);
-		int var22 = MathHelper.floor_double(var15);
-		int var23 = MathHelper.floor_double(var17 - (double)var12);
-		int var24 = MathHelper.floor_double(var17 + (double)var12);
-		double var25 = var2 - var13;
-		double var27 = var4 - var15;
-		double var29 = var6 - var17;
-		Tessellator var31 = Tessellator.instance;
-		var31.startDrawingQuads();
-
-		for(int var32 = var19; var32 <= var20; ++var32) {
-			for(int var33 = var21; var33 <= var22; ++var33) {
-				for(int var34 = var23; var34 <= var24; ++var34) {
-					int var35 = var11.getBlockId(var32, var33 - 1, var34);
-					if(var35 > 0 && var11.getBlockLightValue(var32, var33, var34) > 3) {
-						this.renderShadowOnBlock(Block.blocksList[var35], var2, var4, var6, var32, var33, var34, var8, var12, var25, var27, var29);
-					}
-				}
-			}
-		}
-
-		var31.draw();
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glDepthMask(true);
-	}
+//	private void renderShadow(Entity var1, double var2, double var4, double var6, float var8, float var9) {
+//		GL11.glEnable(GL11.GL_BLEND);
+//		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+//		RenderEngine var10 = this.renderManager.renderEngine;
+//		var10.bindTexture(var10.getTexture("%%/shadow.png"));
+//		World var11 = this.getWorldFromRenderManager();
+//		GL11.glDepthMask(false);
+//		float var12 = this.shadowSize;
+//		double var13 = var1.lastTickPosX + (var1.posX - var1.lastTickPosX) * (double)var9;
+//		double var15 = var1.lastTickPosY + (var1.posY - var1.lastTickPosY) * (double)var9;
+//		double var17 = var1.lastTickPosZ + (var1.posZ - var1.lastTickPosZ) * (double)var9;
+//		int var19 = MathHelper.floor_double(var13 - (double)var12);
+//		int var20 = MathHelper.floor_double(var13 + (double)var12);
+//		int var21 = MathHelper.floor_double(var15 - (double)var12);
+//		int var22 = MathHelper.floor_double(var15);
+//		int var23 = MathHelper.floor_double(var17 - (double)var12);
+//		int var24 = MathHelper.floor_double(var17 + (double)var12);
+//		double var25 = var2 - var13;
+//		double var27 = var4 - var15;
+//		double var29 = var6 - var17;
+//		Tessellator var31 = Tessellator.instance;
+//		var31.startDrawingQuads();
+//
+//		for(int var32 = var19; var32 <= var20; ++var32) {
+//			for(int var33 = var21; var33 <= var22; ++var33) {
+//				for(int var34 = var23; var34 <= var24; ++var34) {
+//					int var35 = var11.getBlockId(var32, var33 - 1, var34);
+//					if(var35 > 0 && var11.getBlockLightValue(var32, var33, var34) > 3) {
+//						this.renderShadowOnBlock(Block.blocksList[var35], var2, var4, var6, var32, var33, var34, var8, var12, var25, var27, var29);
+//					}
+//				}
+//			}
+//		}
+//
+//		var31.draw();
+//		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+//		GL11.glDisable(GL11.GL_BLEND);
+//		GL11.glDepthMask(true);
+//	}
 
 	private World getWorldFromRenderManager() {
 		return this.renderManager.worldObj;
@@ -212,7 +212,7 @@ public abstract class Render {
 			double var10 = this.renderManager.getDistanceToCamera(var1.posX, var1.posY, var1.posZ);
 			float var12 = (float)((1.0D - var10 / 256.0D) * (double)this.shadowOpaque);
 			if(var12 > 0.0F) {
-				this.renderShadow(var1, var2, var4, var6, var12, var9);
+				//this.renderShadow(var1, var2, var4, var6, var12, var9);
 			}
 		}
 

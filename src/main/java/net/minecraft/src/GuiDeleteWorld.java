@@ -1,7 +1,5 @@
 package net.minecraft.src;
 
-import net.PeytonPlayz585.io.File;
-
 public class GuiDeleteWorld extends GuiCreateWorld {
 	public GuiDeleteWorld(GuiScreen var1) {
 		super(var1);
@@ -22,8 +20,7 @@ public class GuiDeleteWorld extends GuiCreateWorld {
 
 	public void deleteWorld(boolean var1, int var2) {
 		if(var1) {
-			File var3 = Minecraft.getMinecraftDir();
-			World.deleteWorld(var3, this.getSaveFileName(var2));
+			World.deleteWorld(this.getSaveFileName(var2));
 		}
 
 		this.mc.displayGuiScreen(this.parentGuiScreen);

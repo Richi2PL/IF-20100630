@@ -1,6 +1,6 @@
 package net.minecraft.src;
 
-import net.PeytonPlayz585.io.File;
+import net.PeytonPlayz585.opengl.LWJGLMain;
 
 public class GuiCreateWorld extends GuiScreen {
 	protected GuiScreen parentGuiScreen;
@@ -12,16 +12,14 @@ public class GuiCreateWorld extends GuiScreen {
 	}
 
 	public void initGui() {
-		File var1 = Minecraft.getMinecraftDir();
-
 		for(int var2 = 0; var2 < 5; ++var2) {
-			NBTTagCompound var3 = World.getLevelData(var1, "World" + (var2 + 1));
+			NBTTagCompound var3 = World.getLevelData("World" + (var2 + 1));
 			if(var3 == null) {
 				this.controlList.add(new GuiButton(var2, this.width / 2 - 100, this.height / 6 + 24 * var2, "- empty -"));
 			} else {
 				String var4 = "World " + (var2 + 1);
-				long var5 = var3.getLong("SizeOnDisk");
-				var4 = var4 + " (" + (float)(var5 / 1024L * 100L / 1024L) / 100.0F + " MB)";
+				double var5 = LWJGLMain.getFileSize("World" + (var2 + 1) + "/level.dat");
+				var4 = var4 + " (" +  (double) var5 / 100 + " MB)";
 				this.controlList.add(new GuiButton(var2, this.width / 2 - 100, this.height / 6 + 24 * var2, var4));
 			}
 		}
@@ -30,8 +28,7 @@ public class GuiCreateWorld extends GuiScreen {
 	}
 
 	protected String getSaveFileName(int var1) {
-		File var2 = Minecraft.getMinecraftDir();
-		return World.getLevelData(var2, "World" + var1) != null ? "World" + var1 : null;
+		return World.getLevelData("World" + var1) != null ? "World" + var1 : null;
 	}
 
 	public void initButtons() {

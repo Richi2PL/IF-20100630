@@ -292,16 +292,17 @@ public class EntityRenderer {
 //		}
 		
 		int var5 = Mouse.getDX();
-		int var6 = Mouse.getDY();
+		int var6 = Mouse.getDY();;
 		byte var91 = 1;
-		
+
 		if(this.mc.gameSettings.invertMouse) {
 			var91 = -1;
 		}
-		
-		if(this.mc.inGameHasFocus) {
-			this.mc.thePlayer.turn((float)var5, (float)(var6 & var91));
+
+		if(this.mc.inGameHasFocus && this.mc.theWorld != null) {
+			this.mc.thePlayer.turn((float)var5, (float)(var6 * var91));
 		}
+
 
 		if(!this.mc.skipRenderWorld) {
 			ScaledResolution var7 = new ScaledResolution(this.mc.displayWidth, this.mc.displayHeight);
@@ -389,24 +390,24 @@ public class EntityRenderer {
 			GL11.glEnable(GL11.GL_BLEND);
 			GL11.glDisable(GL11.GL_CULL_FACE);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.mc.renderEngine.getTexture("/terrain.png"));
-			if(this.mc.gameSettings.fancyGraphics) {
-				GL11.glColorMask(false, false, false, false);
-				int var13 = var3.sortAndRender(var2, 1, (double)var1);
-				GL11.glColorMask(true, true, true, true);
-				if(this.mc.gameSettings.anaglyph) {
-					if(var11 == 0) {
-						GL11.glColorMask(false, true, true, false);
-					} else {
-						GL11.glColorMask(true, false, false, false);
-					}
-				}
+			//if(this.mc.gameSettings.fancyGraphics) {
+				//GL11.glColorMask(false, false, false, false);
+				//int var13 = var3.sortAndRender(var2, 1, (double)var1);
+				//GL11.glColorMask(true, true, true, true);
+				//if(this.mc.gameSettings.anaglyph) {
+					//if(var11 == 0) {
+						//GL11.glColorMask(false, true, true, false);
+					//} else {
+						//GL11.glColorMask(true, false, false, false);
+					//}
+				//}
 
-				if(var13 > 0) {
-					var3.renderAllRenderLists(1, (double)var1);
-				}
-			} else {
-				var3.sortAndRender(var2, 1, (double)var1);
-			}
+				//if(var13 > 0) {
+					var3.sortAndRender(var2, 1, (double)var1);
+				//}
+			//} else {
+				//var3.sortAndRender(var2, 1, (double)var1);
+			//}
 
 			GL11.glDepthMask(true);
 			GL11.glEnable(GL11.GL_CULL_FACE);

@@ -8,8 +8,8 @@ public class PlayerControllerSP extends PlayerController {
 	private float prevBlockDamage = 0.0F;
 	private float blockDestroySoundCounter = 0.0F;
 	private int blockHitWait = 0;
-	//private SpawnerAnimals monsterSpawner = new SpawnerMonsters(this, 100, EntityMonster.class, new Class[]{EntityZombie.class, EntitySkeleton.class, EntityCreeper.class, EntitySpider.class});
-	//private SpawnerAnimals animalSpawner = new SpawnerAnimals(20, EntityAnimal.class, new Class[]{EntitySheep.class, EntityPig.class});
+	private SpawnerAnimals monsterSpawner = new SpawnerMonsters(this, 100, EntityMonster.class, new Class[]{EntityZombie.class, EntitySkeleton.class, EntityCreeper.class, EntitySpider.class});
+	private SpawnerAnimals animalSpawner = new SpawnerAnimals(20, EntityAnimal.class, new Class[]{EntitySheep.class, EntityPig.class});
 
 	public PlayerControllerSP(Minecraft var1) {
 		super(var1);
@@ -118,7 +118,7 @@ public class PlayerControllerSP extends PlayerController {
 
 	public void onUpdate() {
 		this.prevBlockDamage = this.curBlockDamage;
-		//this.monsterSpawner.onUpdate(this.mc.theWorld);
-		//this.animalSpawner.onUpdate(this.mc.theWorld);
+		this.monsterSpawner.onUpdate(this.mc.theWorld);
+		this.animalSpawner.onUpdate(this.mc.theWorld);
 	}
 }

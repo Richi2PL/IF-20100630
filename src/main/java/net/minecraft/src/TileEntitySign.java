@@ -6,6 +6,7 @@ public class TileEntitySign extends TileEntity {
 
 	public void writeToNBT(NBTTagCompound var1) {
 		super.writeToNBT(var1);
+		var1.setString("id", "Sign");
 		var1.setString("Text1", this.signText[0]);
 		var1.setString("Text2", this.signText[1]);
 		var1.setString("Text3", this.signText[2]);

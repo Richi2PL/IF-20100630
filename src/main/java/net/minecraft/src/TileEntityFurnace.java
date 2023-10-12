@@ -46,10 +46,10 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
 		return "Chest";
 	}
 
-	public void readFromNBT(NBTTagCompound var1) {
+	public final void readFromNBT(NBTTagCompound var1) {
 		super.readFromNBT(var1);
 		NBTTagList var2 = var1.getTagList("Items");
-		this.furnaceItemStacks = new ItemStack[this.getSizeInventory()];
+		this.furnaceItemStacks = new ItemStack[this.furnaceItemStacks.length];
 
 		for(int var3 = 0; var3 < var2.tagCount(); ++var3) {
 			NBTTagCompound var4 = (NBTTagCompound)var2.tagAt(var3);
@@ -61,13 +61,15 @@ public class TileEntityFurnace extends TileEntity implements IInventory {
 
 		this.furnaceBurnTime = var1.getShort("BurnTime");
 		this.furnaceCookTime = var1.getShort("CookTime");
-		this.currentItemBurnTime = this.getItemBurnTime(this.furnaceItemStacks[1]);
+		this.currentItemBurnTime = getItemBurnTime(this.furnaceItemStacks[1]);
+		System.out.println("Lit: " + this.furnaceBurnTime + "/" + this.currentItemBurnTime);
 	}
 
-	public void writeToNBT(NBTTagCompound var1) {
+	public final void writeToNBT(NBTTagCompound var1) {
 		super.writeToNBT(var1);
 		var1.setShort("BurnTime", (short)this.furnaceBurnTime);
 		var1.setShort("CookTime", (short)this.furnaceCookTime);
+		var1.setString("id", "Furnace");
 		NBTTagList var2 = new NBTTagList();
 
 		for(int var3 = 0; var3 < this.furnaceItemStacks.length; ++var3) {

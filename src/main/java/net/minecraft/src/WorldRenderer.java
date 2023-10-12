@@ -74,14 +74,6 @@ public class WorldRenderer {
 		}
 	}
 
-//	private void setupGLTranslation() {
-//		float var19 = 1.000001F;
-//		GL11.glTranslatef((float)posXClip * var19, (float)posYClip * var19, (float)posZClip * var19);
-//		for(int var2000 = 0; var2000 < 4; var2000++) {
-//			tessellator.addVertex(posX * var19, posY * var19, posZ * var19);
-//		}
-//	}
-
 	public void updateRenderer() {
 		if(this.needsUpdate) {
 			++chunksUpdated;

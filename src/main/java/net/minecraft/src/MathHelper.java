@@ -1,23 +1,30 @@
 package net.minecraft.src;
 
 public class MathHelper {
-    private static final float[] SIN_TABLE = new float[65536];
-    private static final float SIN_CONVERSION_FACTOR = 10430.378F;
-    private static final float COS_CONVERSION_FACTOR = 16384.0F;
-    private static final float INVERSE_SIN_TABLE_LENGTH = 1.0F / SIN_TABLE.length;
+	private static final float[] SIN_TABLE = new float[4096];
 
-    static {
-        for (int i = 0; i < SIN_TABLE.length; ++i) {
-            SIN_TABLE[i] = (float) Math.sin(i * 2 * Math.PI * INVERSE_SIN_TABLE_LENGTH);
+	static {
+		for (int j = 0; j < 4096; ++j) {
+            SIN_TABLE[j] = (float)Math.sin((double)(((float)j + 0.5F) / 4096.0F * ((float)Math.PI * 2F)));
         }
+
+        for (int l = 0; l < 360; l += 90) {
+            SIN_TABLE[(int)((float)l * 11.377778F) & 4095] = (float)Math.sin((double)((float)l * 0.017453292F));
+        }
+	}
+
+	/**
+     * sin looked up in a table
+     */
+    public static float sin(float p_76126_0_) {
+        return SIN_TABLE[(int)(p_76126_0_ * 651.8986F) & 4095];
     }
 
-    public static final float sin(float var0) {
-        return SIN_TABLE[(int) (var0 * SIN_CONVERSION_FACTOR) & 65535];
-    }
-
-    public static final float cos(float var0) {
-        return SIN_TABLE[(int) (var0 * SIN_CONVERSION_FACTOR + COS_CONVERSION_FACTOR) & 65535];
+    /**
+     * cos looked up in the sin table with the appropriate offset
+     */
+    public static float cos(float value) {
+        return SIN_TABLE[(int)((value + ((float)Math.PI / 2F)) * 651.8986F) & 4095];
     }
 
     public static final float sqrt_float(float var0) {

@@ -1,17 +1,19 @@
 package net.minecraft.src;
 
-import net.PeytonPlayz585.io.File;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
+
+import net.PeytonPlayz585.io.FileSystemUtils;
+import net.PeytonPlayz585.opengl.LWJGLMain;
 
 public class World implements IBlockAccess {
 	private List lightingToUpdate;
@@ -39,7 +41,7 @@ public class World implements IBlockAccess {
 	public boolean isNewWorld;
 	private List worldAccesses;
 	private IChunkProvider chunkProvider;
-	private File saveDirectory;
+	private static String saveDirectory;
 	public long randomSeed;
 	private NBTTagCompound nbtCompoundPlayer;
 	public long setSizeOnDisk;
@@ -47,52 +49,35 @@ public class World implements IBlockAccess {
 	private ArrayList collidingBoundingBoxes;
 	private List entitiesWithinAABBExcludingEntity;
 
-	public static NBTTagCompound getLevelData(File var0, String var1) {
-		File var2 = new File(var0, "saves");
-		File var3 = new File(var2, var1);
-		if(!var3.exists()) {
-			return null;
+	public static NBTTagCompound getLevelData(String var1) {
+		byte[] data = LWJGLMain.readFile(var1 + "/level.dat");
+		System.out.println(var1 + "/level.dat");
+		if(data != null) {
+			try {
+				NBTTagCompound var5 = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(data)));
+				NBTTagCompound var6 = var5.getCompoundTag("Data");
+				return var6;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
 		} else {
-			File var4 = new File(var3, "level.dat");
-			if(var4.exists()) {
-				try {
-					NBTTagCompound var5 = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(var4.getBytes())));
-					NBTTagCompound var6 = var5.getCompoundTag("Data");
-					return var6;
-				} catch (Exception var7) {
-					var7.printStackTrace();
-				}
-			}
-
 			return null;
 		}
 	}
-
-	public static void deleteWorld(File var0, String var1) {
-		File var2 = new File(var0, "saves");
-		File var3 = new File(var2, var1);
-		if(var3.exists()) {
-			deleteWorldFiles(var3.listFiles());
-			var3.delete();
+	
+	public static void deleteWorld(String var1) {
+		String dir = "saves/" + var1;
+		if(LWJGLMain.directoryExists(dir)) {
+			FileSystemUtils.recursiveDeleteDirectory(dir);
 		}
 	}
 
-	private static void deleteWorldFiles(File[] var0) {
-		for(int var1 = 0; var1 < var0.length; ++var1) {
-			if(var0[var1].exists()) {
-				deleteWorldFiles(var0[var1].listFiles());
-			}
-
-			var0[var1].delete();
-		}
-
+	public World(String var2) {
+		this(var2, (new Random()).nextLong());
 	}
 
-	public World(File var1, String var2) {
-		this(var1, var2, (new Random()).nextLong());
-	}
-
-	public World(File var1, String var2, long var3) {
+	public World(String var2, long var3) {
 		this.lightingToUpdate = new ArrayList();
 		this.loadedEntityList = new ArrayList();
 		this.unloadedEntityList = new ArrayList();
@@ -115,14 +100,13 @@ public class World implements IBlockAccess {
 		this.collidingBoundingBoxes = new ArrayList();
 		this.entitiesWithinAABBExcludingEntity = new ArrayList();
 		this.levelName = var2;
-		var1.mkdirs();
-		this.saveDirectory = new File(var1, var2);
-		this.saveDirectory.mkdirs();
-		File var5 = new File(this.saveDirectory, "level.dat");
-		this.isNewWorld = !var5.exists();
-		if(var5.exists()) {
+		this.saveDirectory = var2;
+		byte[] data = LWJGLMain.readFile(saveDirectory + "/level.dat");
+		System.out.println(saveDirectory + "/level.dat");
+		this.isNewWorld = data == null ? false : true;
+		if(data != null) {
 			try {
-				NBTTagCompound var6 = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(var5.getBytes())));
+				NBTTagCompound var6 = (NBTTagCompound) NBTBase.readNamedTag(new DataInputStream(new ByteArrayInputStream(data)));
 				NBTTagCompound var7 = var6.getCompoundTag("Data");
 				this.randomSeed = var7.getLong("RandomSeed");
 				this.spawnX = var7.getInteger("SpawnX");
@@ -142,7 +126,7 @@ public class World implements IBlockAccess {
 			var9 = true;
 		}
 
-		this.chunkProvider = this.getChunkProvider(this.saveDirectory);
+		this.chunkProvider = this.getChunkProvider(saveDirectory);
 		if(var9) {
 			this.spawnX = 0;
 			this.spawnY = 64;
@@ -155,8 +139,8 @@ public class World implements IBlockAccess {
 		this.calculateInitialSkylight();
 	}
 
-	protected IChunkProvider getChunkProvider(File var1) {
-		return new ChunkProviderLoadOrGenerate(this, new ChunkLoader(var1, true), new ChunkProviderGenerate(this, this.randomSeed));
+	protected IChunkProvider getChunkProvider(String var1) {
+		return new ChunkProviderLoadOrGenerate(this, new ChunkLoader(var1), new ChunkProviderGenerate(this, this.randomSeed));
 	}
 
 	public void setSpawnLocation() {
@@ -228,29 +212,29 @@ public class World implements IBlockAccess {
 		var2.setTag("Data", var1);
 
 		try {
-			File var3 = new File(this.saveDirectory, "level.dat_new");
-			File var4 = new File(this.saveDirectory, "level.dat_old");
-			File var5 = new File(this.saveDirectory, "level.dat");
+			byte[] var3 = LWJGLMain.readFile(saveDirectory + "/level.dat_new");
+			byte[] var4 = LWJGLMain.readFile(saveDirectory + "/level.dat_old");
+			byte[] var5 = LWJGLMain.readFile(saveDirectory + "/level.dat");
 			ByteArrayOutputStream bao = new ByteArrayOutputStream(131072);
 			NBTBase.writeNamedTag(var2, new DataOutputStream(bao));
-			var3.writeBytes(bao.toByteArray());
-			if(var4.exists()) {
-				var4.delete();
+			LWJGLMain.writeFile(saveDirectory + "/level.dat_new", bao.toByteArray());
+			if(LWJGLMain.readFile(saveDirectory + "/level.dat_old") != null) {
+				LWJGLMain.deleteFile(saveDirectory + "/level.dat_old");
 			}
 
-			var5.renameTo(var4);
-			if(var5.exists()) {
-				var5.delete();
+			LWJGLMain.renameFile(saveDirectory + "/level.dat", saveDirectory + "/level.dat_old");
+			if(LWJGLMain.readFile(saveDirectory + "/level.dat") != null) {
+				LWJGLMain.deleteFile(saveDirectory + "/level.dat");
 			}
-
-			var3.renameTo(var5);
-			if(var3.exists()) {
-				var3.delete();
+			
+			LWJGLMain.renameFile(saveDirectory + "/level.dat_new", saveDirectory + "/level.dat");
+			
+			if(LWJGLMain.readFile(saveDirectory + "/level.dat_new") != null) {
+				LWJGLMain.deleteFile(saveDirectory + "/level.dat_new");
 			}
 		} catch (Exception var6) {
 			var6.printStackTrace();
 		}
-
 	}
 
 	public boolean saveWorld(int var1) {
