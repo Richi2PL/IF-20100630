@@ -10,6 +10,11 @@ GAME IS EXTREMELY LAGGY...
 Feel free to contribute, just open a pull request and DM on Discord (peytonplayz585) because I probably won't check pull requests that often.
 
 ## Bugs
+- Saving of Entities/Tile Entities have been removed due to a crash
+- Water doesn't render correctly
+- Game is EXTREMELY laggy
+- Lighting is broken
+- Mob spawning removed due to a crash
 
 ## Pros & Cons
 
