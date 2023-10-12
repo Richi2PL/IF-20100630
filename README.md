@@ -3,6 +3,7 @@ This project aims to be a 1:1 replica of Minecraft Infdev 20100630-1 ported to t
 
 ## STILL IN TESTING!
 THIS PROJECT IS STILL IN TESTING, IT WILL CONTAIN BUGS AND GLITCHES SO DON'T GET TOO ATTACHED TO YOUR WORLDS!
+
 GAME IS EXTREMELY LAGGY...
 
 ## Contributing
