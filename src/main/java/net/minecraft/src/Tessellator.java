@@ -6,89 +6,26 @@ import org.teavm.jso.typedarrays.Float32Array;
 import org.teavm.jso.typedarrays.Int32Array;
 
 public class Tessellator {
-
-	/** The byte buffer used for GL allocation. */
+	
 	private Int32Array intBuffer;
 	private Float32Array floatBuffer;
-
-	/**
-	 * The number of vertices to be drawn in the next draw call. Reset to 0 between
-	 * draw calls.
-	 */
 	private int vertexCount = 0;
-
-	/** The first coordinate to be used for the texture. */
 	private float textureU;
-
-	/** The second coordinate to be used for the texture. */
 	private float textureV;
-
-	/** The color (RGBA) value to be used for the following draw call. */
 	private int color;
-
-	/**
-	 * Whether the current draw object for this tessellator has color values.
-	 */
 	private boolean hasColor = false;
-
-	/**
-	 * Whether the current draw object for this tessellator has texture coordinates.
-	 */
 	private boolean hasTexture = false;
-
-	/**
-	 * Whether the current draw object for this tessellator has normal values.
-	 */
-	private boolean hasNormals = false;
-
-	/** The index into the raw buffer to be used for the next data. */
 	private int rawBufferIndex = 0;
-
-	/**
-	 * The number of vertices manually added to the given draw call. This differs
-	 * from vertexCount because it adds extra vertices when converting quads to
-	 * triangles.
-	 */
 	private int addedVertices = 0;
-
-	/** Disables all color information for the following draw call. */
 	private boolean isColorDisabled = false;
-
-	/** The draw mode currently being used by the tessellator. */
 	private int drawMode;
-
-	/**
-	 * An offset to be applied along the x-axis for all vertices in this draw call.
-	 */
 	private double xOffset;
-
-	/**
-	 * An offset to be applied along the y-axis for all vertices in this draw call.
-	 */
 	private double yOffset;
-
-	/**
-	 * An offset to be applied along the z-axis for all vertices in this draw call.
-	 */
 	private double zOffset;
-
-	/** The normal to be applied to the face being drawn. */
-	private int normal;
-
-	/** The static instance of the Tessellator. */
-	public static final Tessellator instance = new Tessellator(525000);
-
-	/** Whether this tessellator is currently in draw mode. */
+	public static final Tessellator instance = new Tessellator(524288);
 	private boolean isDrawing = false;
 
-	/** Whether we are currently using VBO or not. */
-	private boolean useVBO = false;
-
-	/** The size of the buffers used (in integers). */
-	private int bufferSize;
-
 	private Tessellator(int par1) {
-		this.bufferSize = par1;
 		ArrayBuffer a = ArrayBuffer.create(par1 * 4);
 		this.intBuffer = Int32Array.create(a);
 		this.floatBuffer = Float32Array.create(a);
@@ -113,10 +50,6 @@ public class Tessellator {
 				if (this.hasColor) {
 					GL11.glEnableVertexAttrib(GL11.GL_COLOR_ARRAY);
 				}
-
-				if (this.hasNormals) {
-					GL11.glEnableVertexAttrib(GL11.GL_NORMAL_ARRAY);
-				}
 				
 				GL11.glDrawArrays(this.drawMode, 0, this.vertexCount, Int32Array.create(intBuffer.getBuffer(), 0, this.vertexCount * 7));
 				
@@ -126,10 +59,6 @@ public class Tessellator {
 
 				if (this.hasColor) {
 					GL11.glDisableVertexAttrib(GL11.GL_COLOR_ARRAY);
-				}
-
-				if (this.hasNormals) {
-					GL11.glDisableVertexAttrib(GL11.GL_NORMAL_ARRAY);
 				}
 			}
 
@@ -167,7 +96,6 @@ public class Tessellator {
 		this.isDrawing = true;
 		this.reset();
 		this.drawMode = par1;
-		this.hasNormals = false;
 		this.hasColor = false;
 		this.hasTexture = false;
 		this.isColorDisabled = false;
@@ -279,10 +207,6 @@ public class Tessellator {
 
 		if (this.hasColor) {
 			intBuffer0.set(bufferIndex + 5, this.color);
-		}
-
-		if (this.hasNormals) {
-			intBuffer0.set(bufferIndex + 6, this.normal);
 		}
 		
 		this.rawBufferIndex += 7;

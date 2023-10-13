@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -23,14 +24,14 @@ public class ChunkLoader implements IChunkLoader {
 		int unsignedX = x + 30233088;
 		int unsignedZ = z + 30233088;
 		int radix = CHUNK_CHARS.length();
-		char[] path = new char[10];
+		StringBuilder path = new StringBuilder(10);
 		for(int i = 0; i < 5; ++i) {
-			path[i * 2] = CHUNK_CHARS.charAt(unsignedX % radix);
+			path.append(CHUNK_CHARS.charAt(unsignedX % radix));
 			unsignedX /= radix;
-			path[i * 2 + 1] = CHUNK_CHARS.charAt(unsignedZ % radix);
+			path.append(CHUNK_CHARS.charAt(unsignedZ % radix));
 			unsignedZ /= radix;
 		}
-		return new String(path);
+		return path.toString();
 	}
 
 	public Chunk loadChunk(World var1, int x, int z) {
@@ -67,14 +68,16 @@ public class ChunkLoader implements IChunkLoader {
 		NBTTagCompound toSave = new NBTTagCompound();
 		storeChunkInCompound(var2, var1, toSave);
 		ByteArrayOutputStream bao = new ByteArrayOutputStream(131072);
-		try {
-			NBTBase.writeNamedTag(toSave, new DataOutputStream(bao));
+		try (DataOutputStream dos = new DataOutputStream(new BufferedOutputStream(bao))) {
+			NBTBase.writeNamedTag(toSave, dos);
+			dos.flush();
+			byte[] data = bao.toByteArray();
+			LWJGLMain.writeFile(saveDir + "/" + chunkFileForXZ(var2.xPosition, var2.zPosition), data);
 		} catch (IOException e) {
 			System.err.println("Failed to serialize chunk at [" + var2.xPosition + ", " + var2.zPosition + "] to byte array");
 			e.printStackTrace();
 			return;
 		}
-		LWJGLMain.writeFile(saveDir + "/" + chunkFileForXZ(var2.xPosition, var2.zPosition), bao.toByteArray());
 	}
 
 	public void storeChunkInCompound(Chunk var1, World var2, NBTTagCompound var3) {
