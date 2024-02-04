@@ -26,7 +26,7 @@ public class Vec3D {
 		return ((Vec3D)vectorList.get(nextVector++)).setComponents(var0, var2, var4);
 	}
 
-	private Vec3D(double var1, double var3, double var5) {
+	public Vec3D(double var1, double var3, double var5) {
 		if(var1 == -0.0D) {
 			var1 = 0.0D;
 		}

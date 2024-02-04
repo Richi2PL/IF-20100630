@@ -39,9 +39,7 @@ public class RenderEngine {
 				setupTexture(readTextureImage(LWJGLMain.loadResourceBytes(s.substring(7))), i);
 				clampTexture = false;
 			} else {
-				//if(s.equals("/terrain.png")) {
-					//useMipmaps = true;
-				//}
+				useMipmaps = true;
 				setupTexture(readTextureImage(LWJGLMain.loadResourceBytes(s)), i);
 				useMipmaps = false;
 			}
@@ -99,7 +97,7 @@ public class RenderEngine {
 		}
 		int j = bufferedimage.w;
 		int k = bufferedimage.h;
-		int ai[] = bufferedimage.data;
+		int ai[] = bufferedimage.data();
 		byte abyte0[] = new byte[j * k * 4];
 		for (int l = 0; l < ai.length; l++) {
 			int j1 = ai[l] >> 24 & 0xff;
@@ -177,10 +175,13 @@ public class RenderEngine {
 	}
 
 	public void bindTexture(int i) {
+		Minecraft.getMinecraft().setLighting(true);
 		if (i < 0) {
+			Minecraft.getMinecraft().setLighting(false);
 			return;
 		} else {
 			GL11.glBindTexture(3553 /* GL_TEXTURE_2D */, i);
+			Minecraft.getMinecraft().setLighting(false);
 			return;
 		}
 	}

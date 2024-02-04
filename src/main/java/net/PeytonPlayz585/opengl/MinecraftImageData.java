@@ -1,40 +1,55 @@
 package net.PeytonPlayz585.opengl;
 
+import java.nio.IntBuffer;
+
 public class MinecraftImageData {
 
-	public final int[] data;
-	public final int w;
-	public final int h;
-	public final boolean alpha;
+    public final IntBuffer data;
+    public final int w;
+    public final int h;
+    public final boolean alpha;
+    private final int wh;
 
-	public MinecraftImageData(int pw, int ph, boolean palpha) {
-		this.w = pw;
-		this.h = ph;
-		this.alpha = palpha;
-		this.data = new int[pw * ph];
-	}
+    public MinecraftImageData(int pw, int ph, boolean palpha) {
+        this.w = pw;
+        this.h = ph;
+        this.alpha = palpha;
+        this.data = IntBuffer.allocate(pw * ph);
+        this.wh = pw * ph;
+    }
 
-	public MinecraftImageData(int[] pdata, int pw, int ph, boolean palpha) {
-		if (pdata.length != pw * ph) {
-			throw new IllegalArgumentException("array size does not equal image size");
-		}
-		this.w = pw;
-		this.h = ph;
-		this.alpha = palpha;
-		if (!palpha) {
-			for (int i = 0; i < pdata.length; ++i) {
-				pdata[i] = pdata[i] | 0xFF000000;
-			}
-		}
-		this.data = pdata;
-	}
+    public MinecraftImageData(IntBuffer pdata, int pw, int ph, boolean palpha) {
+        if (pdata.capacity() != pw * ph) {
+            throw new IllegalArgumentException("buffer capacity does not equal image size");
+        }
+        w = pw;
+        h = ph;
+        alpha = palpha;
+        wh = pw * ph;
+        if (!alpha) {
+            for (int i = 0; i < wh; ++i) {
+                pdata.put(i, pdata.get(i) | 0xFF000000);
+            }
+            pdata.rewind();
+        }
+        data = pdata;
+    }
 
-	public MinecraftImageData getSubImage(int x, int y, int pw, int ph) {
-		int[] img = new int[pw * ph];
-		for (int i = 0; i < ph; ++i) {
-			System.arraycopy(data, (i + y) * this.w + x, img, i * pw, pw);
-		}
-		return new MinecraftImageData(img, pw, ph, alpha);
-	}
+    public MinecraftImageData getSubImage(int x, int y, int pw, int ph) {
+        int start = y * w + x;
+        IntBuffer subBuffer = data.slice();
+        subBuffer.position(start);
+        subBuffer.limit(start + pw * ph);
+		int[] temp = new int[pw * ph];
+        subBuffer.get(temp);
+		IntBuffer newBuffer = IntBuffer.wrap(temp);
+        return new MinecraftImageData(newBuffer, pw, ph, alpha);
+    }
 
+	public int[] data() {
+        int[] array = new int[wh];
+        data.rewind();
+        data.get(array);
+        return array;
+    }
 }

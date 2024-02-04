@@ -18,7 +18,7 @@ public class FontRenderer {
 		MinecraftImageData bufferedimage = LWJGLMain.loadPNG(LWJGLMain.loadResourceBytes(s));
 		int i = bufferedimage.w;
 		int j = bufferedimage.h;
-		int ai[] = bufferedimage.data;
+		int ai[] = bufferedimage.data();
 		for (int k = 0; k < 256; k++) {
 			int l = k % 16;
 			int k1 = k / 16;
