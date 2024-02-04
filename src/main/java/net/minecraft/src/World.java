@@ -67,10 +67,8 @@ public class World implements IBlockAccess {
 	}
 	
 	public static void deleteWorld(String var1) {
-		String dir = "saves/" + var1;
-		if(LWJGLMain.directoryExists(dir)) {
-			FileSystemUtils.recursiveDeleteDirectory(dir);
-		}
+		String dir = var1 + "/";
+		FileSystemUtils.recursiveDeleteDirectoryWithProgress(dir, "Deleting World!", "Please Wait...", Minecraft.getMinecraft().loadingScreen);
 	}
 
 	public World(String var2) {
