@@ -19,7 +19,7 @@ Feel free to contribute, just open a pull request and DM on Discord (peytonplayz
 ## Pros & Cons
 
 Pros:
-- Can be played in the browser (No download)
+- Can be played in the browser
 - ITS FREE!
 - More features
 
