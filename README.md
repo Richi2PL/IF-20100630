@@ -1,4 +1,4 @@
-# Infdev-20100630-1-WebGL
+# IF-20100630 WebGL
 This project aims to be a 1:1 replica of Minecraft Infdev 20100630-1 ported to the browser using WebGL and TeaVM.
 
 ## STILL IN TESTING!
@@ -7,7 +7,7 @@ THIS PROJECT IS STILL IN TESTING, IT WILL CONTAIN BUGS AND GLITCHES SO DON'T GET
 GAME IS EXTREMELY LAGGY...
 
 ## Contributing
-Feel free to contribute, just open a pull request and DM on Discord (peytonplayz585) because I probably won't check pull requests that often.
+Feel free to contribute, just open a pull request and DM on Discord (peytonplayz585) because i probably won't check pull requests that often.
 
 ## Bugs
 - Saving of Entities/Tile Entities have been removed due to a crash
@@ -19,7 +19,7 @@ Feel free to contribute, just open a pull request and DM on Discord (peytonplayz
 ## Pros & Cons
 
 Pros:
-- Can be played in the browser (No Download)
+- Can be played in the browser (No download)
 - ITS FREE!
 - More features
 
