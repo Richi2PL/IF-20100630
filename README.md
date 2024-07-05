@@ -30,5 +30,5 @@ Cons:
 
 <br>
 
-fuck microsoft :trollface:
+waos
 <br>
