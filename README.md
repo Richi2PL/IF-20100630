@@ -1,5 +1,5 @@
 # IF-20100630 WebGL
-This project aims to be a 1:1 replica of Minecraft Infdev 20100630-1 ported to the browser using WebGL and TeaVM by PeytonPlayz595.
+This project aims to be a 1:1 replica of MC Infdev 20100630-1 ported to the browser using WebGL and TeaVM by PeytonPlayz595.
 
 ## STILL IN TESTING!
 THIS PROJECT IS STILL IN TESTING, IT WILL CONTAIN BUGS AND GLITCHES SO DON'T GET TOO ATTACHED TO YOUR WORLDS!
@@ -20,7 +20,6 @@ Feel free to contribute, just open a pull request and DM on Discord (peytonplayz
 
 Pros:
 - Can be played in the browser
-- ITS FREE!
 - More features
 
 Cons:
